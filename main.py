@@ -1,10 +1,11 @@
-from bleak import discover
-from asyncio import new_event_loop, set_event_loop, get_event_loop
-from time import sleep, time_ns
+import asyncio
 from binascii import hexlify
+from datetime import datetime
 from json import dumps
 from sys import argv
-from datetime import datetime
+from time import sleep, time_ns
+
+from bleak import discover
 
 # Configure update duration (update after n seconds)
 UPDATE_DURATION = 1
@@ -24,7 +25,7 @@ def get_best_result(device):
     strongest_beacon = None
     i = 0
     while i < len(recent_beacons):
-        if(time_ns() - recent_beacons[i]["time"] > RECENT_BEACONS_MAX_T_NS):
+        if (time_ns() - recent_beacons[i]["time"] > RECENT_BEACONS_MAX_T_NS):
             recent_beacons.pop(i)
             continue
         if (strongest_beacon == None or strongest_beacon.rssi < recent_beacons[i]["device"].rssi):
@@ -52,20 +53,14 @@ async def get_device():
     return False
 
 
-# Same as get_device() but it's standalone method instead of async
-def get_data_hex():
-    new_loop = new_event_loop()
-    set_event_loop(new_loop)
-    loop = get_event_loop()
-    a = loop.run_until_complete(get_device())
-    loop.close()
-    return a
+def get_device_data():
+    return asyncio.run(get_device())
 
 
 # Getting data from hex string and converting it to dict(json)
 # Getting data from hex string and converting it to dict(json)
 def get_data():
-    raw = get_data_hex()
+    raw = get_device_data()
 
     # Return blank data if airpods not found
     if not raw:
@@ -99,9 +94,9 @@ def get_data():
 
     # On 14th position we can get charge status of AirPods
     charging_status = int("" + chr(raw[14]), 16)
-    charging_left:bool = (charging_status & (0b00000010 if flip else 0b00000001)) != 0
-    charging_right:bool = (charging_status & (0b00000001 if flip else 0b00000010)) != 0
-    charging_case:bool = (charging_status & 0b00000100) != 0
+    charging_left: bool = (charging_status & (0b00000010 if flip else 0b00000001)) != 0
+    charging_right: bool = (charging_status & (0b00000001 if flip else 0b00000010)) != 0
+    charging_case: bool = (charging_status & 0b00000100) != 0
 
     # Return result info in dict format
     return dict(
@@ -135,7 +130,7 @@ def run():
             json_data = dumps(data)
             if len(argv) > 1:
                 f = open(output_file, "a")
-                f.write(json_data+"\n")
+                f.write(json_data + "\n")
                 f.close()
             else:
                 print(json_data)

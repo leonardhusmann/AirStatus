@@ -2,7 +2,7 @@
 #### Check your AirPods battery level on Linux
 
 #### What is it?
-This is a Python 3.6 script, forked from [faglo/AirStatus](https://github.com/faglo/AirStatus) that allows you to check AirPods battery level from your terminal, as JSON output.
+This is a Python 3.10 script, forked from [faglo/AirStatus](https://github.com/faglo/AirStatus) that allows you to check AirPods battery level from your terminal, as JSON output.
 
 ### Usage
 
