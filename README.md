@@ -4,6 +4,13 @@
 #### What is it?
 This is a Python 3.10 script, forked from [faglo/AirStatus](https://github.com/faglo/AirStatus) that allows you to check AirPods battery level from your terminal, as JSON output.
 
+### Installation
+
+- ```sudo apt install libcairo2-dev```
+- ```sudo apt install libgirepository1.0-dev```
+- ```sudo apt install gir1.2-appindicator3-0.1```
+- ```pip install -r requirements.txt```
+- ```sudo apt install libgirepository1.0-dev gcc libcairo2-dev pkg-config python3-dev gir1.2-gtk-3.0```
 ### Usage
 
 ```
