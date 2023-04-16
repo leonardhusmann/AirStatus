@@ -1,8 +1,6 @@
 import asyncio
 from binascii import hexlify
 from datetime import datetime
-from json import dumps
-from sys import argv
 from time import sleep, time_ns
 
 from bleak import discover
@@ -25,14 +23,14 @@ def get_best_result(device):
     strongest_beacon = None
     i = 0
     while i < len(recent_beacons):
-        if (time_ns() - recent_beacons[i]["time"] > RECENT_BEACONS_MAX_T_NS):
+        if time_ns() - recent_beacons[i]["time"] > RECENT_BEACONS_MAX_T_NS:
             recent_beacons.pop(i)
             continue
-        if (strongest_beacon == None or strongest_beacon.rssi < recent_beacons[i]["device"].rssi):
+        if strongest_beacon is None or strongest_beacon.rssi < recent_beacons[i]["device"].rssi:
             strongest_beacon = recent_beacons[i]["device"]
         i += 1
 
-    if (strongest_beacon != None and strongest_beacon.address == device.address):
+    if strongest_beacon is not None and strongest_beacon.address == device.address:
         strongest_beacon = device
 
     return strongest_beacon
@@ -121,19 +119,11 @@ def is_flipped(raw):
 
 
 def run():
-    output_file = argv[-1]
-
     while True:
         data = get_data()
 
         if data["status"] == 1:
-            json_data = dumps(data)
-            if len(argv) > 1:
-                f = open(output_file, "a")
-                f.write(json_data + "\n")
-                f.close()
-            else:
-                print(json_data)
+            print(data)
 
         sleep(UPDATE_DURATION)
 
